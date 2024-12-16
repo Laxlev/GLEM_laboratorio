@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         String nombre = data.getString("nombre");
                         Integer id = data.getInt("idusuario");
                         Log.d("Login", "Nombre: " + nombre);
-
+                        Log.d("Login", "ID: " + id);
                         Log.d("Login", "Token: " + token + ", Tipo: " + tipo);
 
                         // Guardar el token y tipo en SharedPreferences

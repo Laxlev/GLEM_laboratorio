@@ -37,7 +37,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="CANCELAR SOLICITUD"
+        android:text="SOLICITUDES"
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="20dp"

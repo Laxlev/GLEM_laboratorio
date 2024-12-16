@@ -5,10 +5,10 @@ public class Solicitud {
     private String fecha;
     private String hora;
     private String estado;
-    private Integer idprestamo;
+    private String idprestamo;
 
     // Constructor
-    public Solicitud(String laboratorio, String fecha, String hora, String estado, Integer idprestamo) {
+    public Solicitud(String laboratorio, String fecha, String hora, String estado, String idprestamo) {
         this.laboratorio = laboratorio;
         this.fecha = fecha;
         this.hora = hora;
@@ -32,12 +32,12 @@ public class Solicitud {
     public String getEstado() {
         return estado;
     }
-    
-    public Integer getIdprestamo() {
+
+    public String getIdprestamo() {
         return idprestamo;
     }
-    
-    public void setIdprestamo(Integer idprestamo) {
+
+    public void setIdprestamo(String idprestamo) {
         this.idprestamo = idprestamo;
     }
 

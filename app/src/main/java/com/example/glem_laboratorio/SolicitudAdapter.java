@@ -49,7 +49,7 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
 
         // Agregar el click listener para el botón de eliminar
         holder.eliminarButton.setOnClickListener(v -> {
-            Integer idPrestamo = solicitud.getIdprestamo();
+            String idPrestamo = solicitud.getIdprestamo();
 
             // Mostrar o usar el idPrestamo como desees
             Log.d("Solicitud", "ID de préstamo: " + idPrestamo);

@@ -19,9 +19,11 @@ import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.kevinsawicki.http.HttpRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,18 +38,24 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Spinner selectLabSpinner;
     private ArrayList<String> laboratorios = new ArrayList<>();
+    private ArrayList<String> laboratoriosIds = new ArrayList<>();
     private ArrayList<LatLng> laboratorioLocations = new ArrayList<>();
+    private int laboratorioIndex = 0;
     private SharedPreferences sharedPreferences;
     private TextView usernametxt;
-    private String token, tipo, nombre, idlaboratorio;
+    private String token, tipo, nombre;
+    private String idlaboratorio;
     private Integer idusuario;
     private Button ButtonSubmit;
     private EditText materialEditText,timeEditText, dateEditText;
@@ -93,6 +101,15 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         //Configurar el botón de enviar
         ButtonSubmit= findViewById(R.id.buttonSubmit);
         materialEditText = findViewById(R.id.materialEditText);
+        View.OnClickListener buttonClickListener = this::handleButtonClick;
+        ButtonSubmit.setOnClickListener(buttonClickListener);
+    }
+
+    // Manejar clics de botones
+    private void handleButtonClick(View view) {
+        if (view.getId() == R.id.buttonSubmit) {
+            submitSolicitudTask();
+        }
     }
 
     private void loadLaboratorios() {
@@ -102,6 +119,59 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
     private void logout() {
         String url = "https://nq6pfh4p-4000.usw3.devtunnels.ms/auth/logout";
         new LogoutTask().execute(url);
+    }
+
+    private void submitSolicitudTask() {
+         new Thread(() -> {
+            try {
+                String url = "https://nq6pfh4p-4000.usw3.devtunnels.ms/prestamo/create";
+                // Crear el JSON para enviar en el cuerpo
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("idlaboratorio", laboratoriosIds.get(laboratorioIndex));
+                jsonBody.put("idusuario",idusuario);
+                String fechadate = dateEditText.getText().toString();
+                // Definir el formato de entrada y salida
+                SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String formattedDate;
+                try {
+                    // Parsear la fecha y reformatearla
+                    Date date = inputFormat.parse(fechadate);
+                    formattedDate = outputFormat.format(date);
+                    Integer duracion = 1;
+                    String hora = timeEditText.getText().toString();
+                    jsonBody.put("fecha",formattedDate);
+                    jsonBody.put("horainicio",hora + ":00");
+                    jsonBody.put("duracion",duracion);
+                    if(!materialEditText.getText().toString().isEmpty()){
+                        jsonBody.put("observaciones",materialEditText.getText().toString());
+                    }
+                    Log.d("body", "fecha"+ formattedDate);
+                    Log.d("idUsr", "idusuario"+ idusuario);
+                    Log.i("body", "horainicio"+ hora + ":00");
+                    // Imprimir la fecha formateada
+                    System.out.println("Fecha formateada: " + formattedDate);
+                } catch (ParseException e) {
+                    System.err.println("Error al formatear la fecha: " + e.getMessage());
+                }
+
+
+                // Realizar la solicitud POST
+                HttpRequest request = HttpRequest.post(url)
+                    .contentType("application/json") // Especificar el tipo de contenido
+                    .accept("application/json") // Aceptar respuesta JSON
+                    .send(jsonBody.toString()); // Enviar el JSON como cadena
+
+                // Obtener el código de respuesta
+                int responseCode = request.code();
+                Log.d("Login", "Código de respuesta: " + responseCode);
+            }catch (Exception e) {
+            Log.e("LoginError", "Error al realizar el login", e);
+            runOnUiThread(() ->{
+                Toast.makeText(RegistrarSol.this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
+            });
+            }
+        }).start();
     }
 
     private class LogoutTask extends AsyncTask<String, Void, String> {
@@ -163,6 +233,7 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 changeMarker(position);
+                laboratorioIndex = position;
             }
 
             @Override
@@ -217,9 +288,8 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
 
         // Crear menú dinámicamente
         popupMenu.getMenu().add(0, 1, 0, "Registrar Solicitudes");
-        popupMenu.getMenu().add(0, 2, 1, "Consultar Solicitudes");
-        popupMenu.getMenu().add(0, 3, 2, "Cancelar Solicitud");
-        popupMenu.getMenu().add(0, 4, 3, "Logout");
+        popupMenu.getMenu().add(0, 2, 1, "Solicitudes");
+        popupMenu.getMenu().add(0, 3, 2, "Logout");
 
         // Acciones al hacer clic en las opciones del menú
         popupMenu.setOnMenuItemClickListener(this::handleMenuItemClick);
@@ -232,16 +302,10 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
             case 1: // Registrar Solicitudes
                 startActivity(new Intent(RegistrarSol.this, RegistrarSol.class));
                 return true;
-
-            case 2: // Consultar Solicitudes
-                startActivity(new Intent(RegistrarSol.this, ConsultarSol.class));
-                return true;
-
-            case 3: // Cancelar Solicitud
+            case 2: // Cancelar Solicitud
                 startActivity(new Intent(RegistrarSol.this, CancelarSol.class));
                 return true;
-
-            case 4: // Logout
+            case 3: // Logout
                 logout(); // Llamar al método logout
                 return true;
             default:
@@ -289,13 +353,14 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
                     Log.d("length" , i + " ");
                     JSONObject lab = data.getJSONObject(i);
                     Log.d("length" , lab.toString());
-                    String aula = lab.optString("aula", "null");
+                    String aula = lab.optString("aula", "null") == "null" ? "" : lab.getString("aula");
                     String plantel = lab.getString("plantel") == "null" ? "" : lab.getString("plantel");
                     String departamento = lab.getString("departamento") == "null" ? "" : lab.getString("departamento");
                     String edificio = lab.getString("num_ed") == "null" ? "" : lab.getString("num_ed");
                     String nombre = plantel + " - " + "Edificio " + edificio + aula + " (" + departamento + ")";
                     laboratorios.add(nombre);
                     idlaboratorio = lab.getString("_id");
+                    laboratoriosIds.add(idlaboratorio);
                     // Supongamos que los valores de latitud y longitud se obtienen como cadenas (String).
                     String latitudeString = lab.getString("latitude");
                     String longitudeString = lab.getString("longitude");

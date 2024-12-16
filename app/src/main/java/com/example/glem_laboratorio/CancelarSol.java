@@ -35,6 +35,7 @@ public class CancelarSol extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SolicitudAdapter solicitudesAdapter;
     private List<Solicitud> solicitudList;
+    private Integer idusuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,8 @@ public class CancelarSol extends AppCompatActivity {
     }
 
     private void loadUrls() {
-        String urlSol = "https://nq6pfh4p-4000.usw3.devtunnels.ms/prestamo/get";
+        idusuario = sharedPreferences.getInt("id", -1);
+        String urlSol = "https://nq6pfh4p-4000.usw3.devtunnels.ms/prestamo/get/usuario/" + idusuario;
         new FetchSolicitudesTask().execute(urlSol);
     }
 
@@ -78,9 +80,8 @@ public class CancelarSol extends AppCompatActivity {
 
         // Crear menú dinámicamente
         popupMenu.getMenu().add(0, 1, 0, "Registrar Solicitudes");
-        popupMenu.getMenu().add(0, 2, 1, "Consultar Solicitudes");
-        popupMenu.getMenu().add(0, 3, 2, "Cancelar Solicitud");
-        popupMenu.getMenu().add(0, 4, 3, "Logout");
+        popupMenu.getMenu().add(0, 2, 1, "Solicitudes");
+        popupMenu.getMenu().add(0, 3, 2, "Logout");
 
         // Acciones al hacer clic en las opciones del menú
         popupMenu.setOnMenuItemClickListener(item -> handleMenuItemClick(item));
@@ -126,48 +127,33 @@ public class CancelarSol extends AppCompatActivity {
                 // Limpiar la lista de solicitudes
                 solicitudList.clear();
 
-                // Obtener el idusuario desde SharedPreferences
-                int idUsuario = sharedPreferences.getInt("id", -1);
-
                 // Filtrar las solicitudes que coinciden con el idusuario
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject solicitudJson = data.getJSONObject(i);
+                    JSONObject laboratorio = solicitudJson.getJSONObject("laboratorio");
+                    String numEd = laboratorio.getString("num_ed");
 
-                    // Filtramos por el idusuario
-                    if (solicitudJson.getInt("idusuario") == idUsuario) {
-                        // Obtener los datos de la solicitud
-                        String laboratorio = String.valueOf(solicitudJson.getInt("idlaboratorio"));
-                        String fechaOriginal = solicitudJson.getString("fecha");
+                    String fechaOriginal = solicitudJson.getString("fecha");
 
                         // Formatear la fecha
                         try {
-                            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                            Date fechaDate = originalFormat.parse(fechaOriginal);
-                            SimpleDateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            String fecha = targetFormat.format(fechaDate);
-                            Integer idprestamo = solicitudJson.getInt("idprestamo");
+                            String idprestamo = solicitudJson.getString("_id");
                             // Obtener y formatear la hora
-                            String horaOriginal = solicitudJson.getString("horaInicio");
+                            String horaOriginal = solicitudJson.getString("horainicio");
                             SimpleDateFormat horaFormat = new SimpleDateFormat("HH:mm:ss");
                             Date horaDate = horaFormat.parse(horaOriginal);
                             SimpleDateFormat horaTargetFormat = new SimpleDateFormat("HH:mm");
                             String hora = horaTargetFormat.format(horaDate);
-
                             String estado = solicitudJson.getString("estado");
-
-                            Log.d("Login", "Laboratorio: " + laboratorio + ", Fecha: " + fecha + ", Hora: " + hora + ", Estado: " + estado);
+                            Log.d("Login", "Laboratorio: " + numEd + ", Fecha: " + fechaOriginal + ", Hora: " + hora + ", Estado: " + estado);
 
                             // Crear el objeto Solicitud y agregarlo a la lista
-                            Solicitud solicitud = new Solicitud(laboratorio, fecha, hora, estado, idprestamo);
+                            Solicitud solicitud = new Solicitud( numEd, fechaOriginal, hora, estado, idprestamo);
                             solicitudList.add(solicitud);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-
-
-                }
-
                 // Actualizar el RecyclerView con las solicitudes filtradas
                 solicitudesAdapter.notifyDataSetChanged();
             } catch (Exception e) {
@@ -183,17 +169,12 @@ public class CancelarSol extends AppCompatActivity {
                 startActivity(intent1);
                 return true;
 
-            case 2: // Consultar Solicitudes
-                Intent intent2 = new Intent(CancelarSol.this, ConsultarSol.class);
-                startActivity(intent2);
-                return true;
-
-            case 3: // Cancelar Solicitud
+            case 2: // Cancelar Solicitud
                 Intent intent3 = new Intent(CancelarSol.this, CancelarSol.class);
                 startActivity(intent3);
                 return true;
 
-            case 4: // logout
+            case 3: // logout
                 Intent intent5 = new Intent(CancelarSol.this, MainActivity.class);
                 startActivity(intent5);
                 return true;
