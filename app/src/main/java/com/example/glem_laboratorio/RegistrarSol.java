@@ -41,8 +41,10 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -54,11 +56,11 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
     private int laboratorioIndex = 0;
     private SharedPreferences sharedPreferences;
     private TextView usernametxt;
-    private String token, tipo, nombre;
+    private String token, tipo, nombre, hora;
     private String idlaboratorio;
     private Integer idusuario;
     private Button ButtonSubmit;
-    private EditText materialEditText,timeEditText, dateEditText;
+    private EditText materialEditText, dateEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +75,9 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         dateEditText = findViewById(R.id.dateEditText);
         dateEditText.setOnClickListener(v -> showDatePicker(dateEditText));
 
-        // Configurar TimePicker
-        timeEditText = findViewById(R.id.timeEditText);
-        timeEditText.setOnClickListener(v -> showTimePicker(timeEditText));
+        Spinner timeSpinner = findViewById(R.id.timeSpinner);
+        setupTimeSpinner(timeSpinner);
+
 
         //SharedPreferences
         sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE);
@@ -104,6 +106,42 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         View.OnClickListener buttonClickListener = this::handleButtonClick;
         ButtonSubmit.setOnClickListener(buttonClickListener);
     }
+
+
+    private void setupTimeSpinner(Spinner timeSpinner) {
+        // Lista de horas permitidas en formato HH:MM
+        List<String> allowedHours = new ArrayList<>();
+        for (int hour = 8; hour <= 20; hour += 1) {
+            allowedHours.add(String.format("%02d:00", hour));
+        }
+
+        // Crear un ArrayAdapter para el Spinner
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                allowedHours
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        timeSpinner.setAdapter(adapter);
+
+        // Configurar el listener para manejar la selección
+        timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Obtener la hora seleccionada
+                String selectedHour = allowedHours.get(position);
+                hora = selectedHour;
+                // Aquí puedes realizar acciones con la hora seleccionada
+                Toast.makeText(getApplicationContext(), "Hora seleccionada: " + selectedHour, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // No hacer nada si no se selecciona nada
+            }
+        });
+    }
+
 
     // Manejar clics de botones
     private void handleButtonClick(View view) {
@@ -139,7 +177,6 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
                     Date date = inputFormat.parse(fechadate);
                     formattedDate = outputFormat.format(date);
                     Integer duracion = 1;
-                    String hora = timeEditText.getText().toString();
                     jsonBody.put("fecha",formattedDate);
                     jsonBody.put("horainicio",hora + ":00");
                     jsonBody.put("duracion",duracion);
