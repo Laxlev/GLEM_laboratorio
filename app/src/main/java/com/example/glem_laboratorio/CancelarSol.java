@@ -69,8 +69,7 @@ public class CancelarSol extends AppCompatActivity {
     }
 
     private void loadUrls() {
-        String urlLab = "https://nq6pfh4p-3000.usw3.devtunnels.ms/laboratorio/get";
-        String urlSol = "https://nq6pfh4p-3000.usw3.devtunnels.ms/prestamo/get";
+        String urlSol = "https://nq6pfh4p-4000.usw3.devtunnels.ms/prestamo/get";
         new FetchSolicitudesTask().execute(urlSol);
     }
 
@@ -153,7 +152,7 @@ public class CancelarSol extends AppCompatActivity {
                             Date horaDate = horaFormat.parse(horaOriginal);
                             SimpleDateFormat horaTargetFormat = new SimpleDateFormat("HH:mm");
                             String hora = horaTargetFormat.format(horaDate);
-                            
+
                             String estado = solicitudJson.getString("estado");
 
                             Log.d("Login", "Laboratorio: " + laboratorio + ", Fecha: " + fecha + ", Hora: " + hora + ", Estado: " + estado);

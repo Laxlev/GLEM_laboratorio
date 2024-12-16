@@ -64,9 +64,6 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
         });
     }
 
-
-
-
     @Override
     public int getItemCount() {
         return solicitudList.size();
@@ -96,7 +93,7 @@ public class SolicitudAdapter extends RecyclerView.Adapter<SolicitudAdapter.Soli
 
             try {
                 // Construir la URL con los parámetros idprestamo y estado
-                String urlString = "https://nq6pfh4p-3000.usw3.devtunnels.ms/prestamo/delete/" + idPrestamo + "/" + estado;
+                String urlString = "https://nq6pfh4p-4000.usw3.devtunnels.ms/prestamo/delete/" + idPrestamo + "/" + estado;
                 URL url = new URL(urlString);
 
                 // Abrir la conexión y configurar el método HTTP

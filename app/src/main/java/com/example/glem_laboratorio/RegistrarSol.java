@@ -47,8 +47,8 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<LatLng> laboratorioLocations = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private TextView usernametxt;
-    private String token, tipo, nombre;
-    private Integer idlaboratorio, idusuario;
+    private String token, tipo, nombre, idlaboratorio;
+    private Integer idusuario;
     private Button ButtonSubmit;
     private EditText materialEditText,timeEditText, dateEditText;
 
@@ -96,11 +96,11 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void loadLaboratorios() {
-        String url = "https://nq6pfh4p-3000.usw3.devtunnels.ms/laboratorio/get";
+        String url = "https://nq6pfh4p-4000.usw3.devtunnels.ms/laboratorio/get";
         new FetchLaboratoriosTask().execute(url);
     }
     private void logout() {
-        String url = "https://nq6pfh4p-3000.usw3.devtunnels.ms/auth/logout";
+        String url = "https://nq6pfh4p-4000.usw3.devtunnels.ms/auth/logout";
         new LogoutTask().execute(url);
     }
 
@@ -155,6 +155,7 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void updateSpinner() {
+        Log.d("Spinner", "Actualizando Spinner");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, laboratorios);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectLabSpinner.setAdapter(adapter);
@@ -283,17 +284,25 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
 
                 laboratorios.clear();
                 laboratorioLocations.clear();
-
+                Log.d("length" , String.valueOf(data.length()));
                 for (int i = 0; i < data.length(); i++) {
+                    Log.d("length" , i + " ");
                     JSONObject lab = data.getJSONObject(i);
-                    String aula = lab.getString("aula") == "null" ? "" : lab.getString("aula");
-                    String nombre = lab.getString("plantel") + " - " +
-                            "Edificio " + lab.getInt("num_ed") + aula +
-                            " (" + lab.getString("departamento") + ")";
+                    Log.d("length" , lab.toString());
+                    String aula = lab.optString("aula", "null");
+                    String plantel = lab.getString("plantel") == "null" ? "" : lab.getString("plantel");
+                    String departamento = lab.getString("departamento") == "null" ? "" : lab.getString("departamento");
+                    String edificio = lab.getString("num_ed") == "null" ? "" : lab.getString("num_ed");
+                    String nombre = plantel + " - " + "Edificio " + edificio + aula + " (" + departamento + ")";
                     laboratorios.add(nombre);
-                    idlaboratorio = lab.getInt("idlaboratorio");
-                    double latitude = lab.getDouble("latitude");
-                    double longitude = lab.getDouble("longitude");
+                    idlaboratorio = lab.getString("_id");
+                    // Supongamos que los valores de latitud y longitud se obtienen como cadenas (String).
+                    String latitudeString = lab.getString("latitude");
+                    String longitudeString = lab.getString("longitude");
+
+                    // Convierte las cadenas a valores de tipo double.
+                    double latitude = Double.parseDouble(latitudeString);
+                    double longitude = Double.parseDouble(longitudeString);
                     laboratorioLocations.add(new LatLng(latitude, longitude));
                 }
                 updateSpinner();
