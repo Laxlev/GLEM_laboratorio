@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:id="@+id/regsol">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:background="#002D6D"
+        android:gravity="center_vertical">
+
+        <!-- Nombre de usuario -->
+        <TextView
+            android:id="@+id/usernametxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="NOMBREUSUARIO"
+            android:textColor="@android:color/white"
+            android:paddingStart="16dp"
+            android:textStyle="bold"
+            android:textSize="18sp" />
+
+        <!-- Botón del menú -->
+        <ImageView
+            android:id="@+id/menuButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:src="@drawable/ic_menu"/>
+    </LinearLayout>
+
+    <!-- Contenedor del contenido principal -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white">
+
+            <!-- Título -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrar una nueva solicitud"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Nombre ID -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Nombre Completo"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:layout_marginEnd="8dp" />
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="ID"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:layout_marginBottom="8dp" />
+            </LinearLayout>
+            <!-- materia lab -->
+            <!-- Spinner para seleccionar el laboratorio -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Materia"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:layout_marginEnd="8dp" />
+
+                <Spinner
+                    android:id="@+id/selectLab"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:layout_marginBottom="8dp" />
+            </LinearLayout>
+
+            <!-- Carrera grupo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Grupo"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:layout_marginEnd="8dp" />
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Carrera"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:layout_marginBottom="8dp" />
+            </LinearLayout>
+            <!-- Fecha y hora -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+
+                <!-- Campo de Fecha -->
+                <EditText
+                    android:id="@+id/dateEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="mm/dd/yyyy"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:focusable="false"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                    android:layout_marginEnd="8dp" />
+
+                <!-- Campo de Hora -->
+                <EditText
+                    android:id="@+id/timeEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="--:-- --"
+                    android:background="@android:color/white"
+                    android:padding="12dp"
+                    android:elevation="2dp"
+                    android:focusable="false"
+                    android:drawableEnd="@android:drawable/ic_menu_recent_history" />
+            </LinearLayout>
+
+            <!-- Material -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Material a solicitar"
+                android:background="@android:color/white"
+                android:padding="12dp"
+                android:elevation="2dp"
+                android:gravity="start|top"
+                android:minHeight="80dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Mapa -->
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Botón Enviar -->
+            <Button
+                android:id="@+id/buttonSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enviar"
+                android:backgroundTint="#002D6D"
+                android:textColor="@android:color/white"
+                android:elevation="2dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

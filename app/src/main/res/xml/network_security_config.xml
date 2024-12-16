@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.50.28</domain>
+    </domain-config>
+
+    <!-- Agregar la nueva URL -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">nq6pfh4p-3000.usw3.devtunnels.ms</domain>
+    </domain-config>
+</network-security-config>
