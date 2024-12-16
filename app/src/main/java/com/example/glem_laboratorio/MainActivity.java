@@ -27,7 +27,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     TextView usuariosLabel;
-    Button entrar, teacherLink;
+    Button entrar;
     EditText usernameEditText, passwordEditText; // Campos de entrada
     Boolean maestro = false;
     SharedPreferences sharedPreferences;
@@ -52,34 +52,20 @@ public class MainActivity extends AppCompatActivity {
         // Inicializar vistas
         usuariosLabel = findViewById(R.id.usuariosLabel);
         entrar = findViewById(R.id.btnEntrar);
-        teacherLink = findViewById(R.id.teacherLink);
         usernameEditText = findViewById(R.id.username); // Campo usuario
         passwordEditText = findViewById(R.id.password); // Campo contraseña
 
         // Deshabilitar modo oscuro
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        // Actualizar la interfaz según el valor de 'maestro'
-        updateUI();
 
         // Asignar un único listener para ambos botones
         View.OnClickListener buttonClickListener = this::handleButtonClick;
         entrar.setOnClickListener(buttonClickListener);
-        teacherLink.setOnClickListener(buttonClickListener);
     }
 
     // Manejar clics de botones
     private void handleButtonClick(View view) {
-        if (view.getId() == R.id.teacherLink) {
-            // Cambiar el valor de 'maestro'
-            maestro = !maestro;
-            // Actualizar UI
-            updateUI();
-            // Guardar el nuevo valor de 'maestro' en SharedPreferences
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("maestro", maestro);
-            editor.apply();
-        }
         if (view.getId() == R.id.btnEntrar) {
             String correo = usernameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
@@ -128,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject data = responseJson.getJSONObject("data");
                         String tipo = data.getString("tipo");
                         String nombre = data.getString("nombre");
+                        Integer id = data.getInt("idusuario");
                         Log.d("Login", "Nombre: " + nombre);
 
                         Log.d("Login", "Token: " + token + ", Tipo: " + tipo);
@@ -137,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                         editor.putString("token", token);
                         editor.putString("tipo", tipo);
                         editor.putString("nombre", nombre);
+                        editor.putInt("id", id);
                         editor.apply();
 
                         runOnUiThread(() -> {
@@ -165,18 +153,5 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
         }).start();
-    }
-
-
-
-    // Actualizar la interfaz de usuario según el valor de 'maestro'
-    private void updateUI() {
-        if (maestro) {
-            usuariosLabel.setText("Maestros");
-            teacherLink.setText("¿Eres un alumno?");
-        } else {
-            usuariosLabel.setText("Alumnos");
-            teacherLink.setText("¿Eres un maestro?");
-        }
     }
 }

@@ -59,33 +59,6 @@
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_marginBottom="24dp" />
-
-            <!-- Nombre ID -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="5dp">
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Nombre Completo"
-                    android:background="@android:color/white"
-                    android:padding="12dp"
-                    android:elevation="2dp"
-                    android:layout_marginEnd="8dp" />
-
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="ID"
-                    android:background="@android:color/white"
-                    android:padding="12dp"
-                    android:elevation="2dp"
-                    android:layout_marginBottom="8dp" />
-            </LinearLayout>
             <!-- materia lab -->
             <!-- Spinner para seleccionar el laboratorio -->
             <LinearLayout
@@ -93,53 +66,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="5dp">
-
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Materia"
-                    android:background="@android:color/white"
-                    android:padding="12dp"
-                    android:elevation="2dp"
-                    android:layout_marginEnd="8dp" />
-
                 <Spinner
                     android:id="@+id/selectLab"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@android:color/white"
                     android:padding="12dp"
-                    android:elevation="2dp"
-                    android:layout_marginBottom="8dp" />
+                    android:elevation="2dp"/>
             </LinearLayout>
 
-            <!-- Carrera grupo -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="5dp">
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Grupo"
-                    android:background="@android:color/white"
-                    android:padding="12dp"
-                    android:elevation="2dp"
-                    android:layout_marginEnd="8dp" />
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Carrera"
-                    android:background="@android:color/white"
-                    android:padding="12dp"
-                    android:elevation="2dp"
-                    android:layout_marginBottom="8dp" />
-            </LinearLayout>
             <!-- Fecha y hora -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -177,6 +112,7 @@
 
             <!-- Material -->
             <EditText
+                android:id="@+id/materialEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Material a solicitar"

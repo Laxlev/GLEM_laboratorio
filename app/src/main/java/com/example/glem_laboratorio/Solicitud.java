@@ -5,13 +5,15 @@ public class Solicitud {
     private String fecha;
     private String hora;
     private String estado;
+    private Integer idprestamo;
 
     // Constructor
-    public Solicitud(String laboratorio, String fecha, String hora, String estado) {
+    public Solicitud(String laboratorio, String fecha, String hora, String estado, Integer idprestamo) {
         this.laboratorio = laboratorio;
         this.fecha = fecha;
         this.hora = hora;
         this.estado = estado;
+        this.idprestamo = idprestamo;
     }
 
     // Getters
@@ -29,6 +31,14 @@ public class Solicitud {
 
     public String getEstado() {
         return estado;
+    }
+    
+    public Integer getIdprestamo() {
+        return idprestamo;
+    }
+    
+    public void setIdprestamo(Integer idprestamo) {
+        this.idprestamo = idprestamo;
     }
 
     // Setters (opcionales, si planeas modificar los datos en algún momento)

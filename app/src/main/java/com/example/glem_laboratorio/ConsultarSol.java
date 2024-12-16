@@ -45,10 +45,7 @@ public class ConsultarSol extends AppCompatActivity {
         popupMenu.getMenu().add(0, 1, 0, "Registrar Solicitudes");
         popupMenu.getMenu().add(0, 2, 1, "Consultar Solicitudes");
         popupMenu.getMenu().add(0, 3, 2, "Cancelar Solicitud");
-        if (tipo.equals("MAESTRO")) {
-            popupMenu.getMenu().add(0, 4, 3, "Cambio de Horario");
-        }
-        popupMenu.getMenu().add(0, 5, 4, "Logout");
+        popupMenu.getMenu().add(0, 4, 3, "Logout");
 
         // Acciones al hacer clic en las opciones del menú
         popupMenu.setOnMenuItemClickListener(item -> handleMenuItemClick(item));
@@ -73,12 +70,7 @@ public class ConsultarSol extends AppCompatActivity {
                 startActivity(intent3);
                 return true;
 
-            case 4: // Cambio de Horario
-                Intent intent4 = new Intent(ConsultarSol.this, ConsultarSol.class);  // Use ConsultarSol.this
-                startActivity(intent4);
-                return true;
-
-            case 5: // Logout
+            case 4: // Logout
                 Intent intent5 = new Intent(ConsultarSol.this, MainActivity.class);  // Use ConsultarSol.this
                 startActivity(intent5);
                 return true;

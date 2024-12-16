@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,6 +48,9 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
     private SharedPreferences sharedPreferences;
     private TextView usernametxt;
     private String token, tipo, nombre;
+    private Integer idlaboratorio, idusuario;
+    private Button ButtonSubmit;
+    private EditText materialEditText,timeEditText, dateEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +62,11 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         menuButton.setOnClickListener(this::showMenu);
 
         // Configurar DatePicker
-        EditText dateEditText = findViewById(R.id.dateEditText);
+        dateEditText = findViewById(R.id.dateEditText);
         dateEditText.setOnClickListener(v -> showDatePicker(dateEditText));
 
         // Configurar TimePicker
-        EditText timeEditText = findViewById(R.id.timeEditText);
+        timeEditText = findViewById(R.id.timeEditText);
         timeEditText.setOnClickListener(v -> showTimePicker(timeEditText));
 
         //SharedPreferences
@@ -70,6 +74,7 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         token = sharedPreferences.getString("token", null); // null es el valor por defecto si no encuentra la clave
         tipo = sharedPreferences.getString("tipo", "ALUMNO"); // Valor por defecto: "ALUMNO"
         nombre = sharedPreferences.getString("nombre", null);
+        idusuario = sharedPreferences.getInt("id", -1);
         Log.d("Login", "Token: " + token + ", Tipo: " + tipo + ", Nombre: " + nombre);
         usernametxt = findViewById(R.id.usernametxt);
         usernametxt.setText(nombre);
@@ -84,12 +89,70 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         // Configurar el Spinner
         selectLabSpinner = findViewById(R.id.selectLab);
         loadLaboratorios(); // Cargar datos desde la API
+
+        //Configurar el botón de enviar
+        ButtonSubmit= findViewById(R.id.buttonSubmit);
+        materialEditText = findViewById(R.id.materialEditText);
     }
 
     private void loadLaboratorios() {
         String url = "https://nq6pfh4p-3000.usw3.devtunnels.ms/laboratorio/get";
         new FetchLaboratoriosTask().execute(url);
     }
+    private void logout() {
+        String url = "https://nq6pfh4p-3000.usw3.devtunnels.ms/auth/logout";
+        new LogoutTask().execute(url);
+    }
+
+    private class LogoutTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            StringBuilder result = new StringBuilder();
+            try {
+                // Crear la URL
+                URL url = new URL(urls[0]);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                // Configurar la solicitud GET
+                conn.setRequestMethod("GET");
+
+                // Enviar el token en el encabezado (header)
+                conn.setRequestProperty("x-access-token", token);
+
+                // Obtener la respuesta
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                reader.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            // Aquí puedes manejar la respuesta, pero también necesitas limpiar las preferencias
+            try {
+                // Limpiar SharedPreferences (eliminando el token)
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("token");
+                editor.remove("tipo");
+                editor.remove("nombre");
+                editor.apply();
+
+                // Redirigir al usuario a la pantalla de login o pantalla principal
+                Intent intent = new Intent(RegistrarSol.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // Cerrar la actividad actual
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     private void updateSpinner() {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, laboratorios);
@@ -147,6 +210,7 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         timePickerDialog.show();
     }
 
+
     private void showMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
 
@@ -154,10 +218,7 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
         popupMenu.getMenu().add(0, 1, 0, "Registrar Solicitudes");
         popupMenu.getMenu().add(0, 2, 1, "Consultar Solicitudes");
         popupMenu.getMenu().add(0, 3, 2, "Cancelar Solicitud");
-        if (tipo.equals("MAESTRO")) {
-            popupMenu.getMenu().add(0, 4, 3, "Cambio de Horario");
-        }
-        popupMenu.getMenu().add(0, 5, 4, "Logout");
+        popupMenu.getMenu().add(0, 4, 3, "Logout");
 
         // Acciones al hacer clic en las opciones del menú
         popupMenu.setOnMenuItemClickListener(this::handleMenuItemClick);
@@ -179,14 +240,9 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(new Intent(RegistrarSol.this, CancelarSol.class));
                 return true;
 
-            case 4: // Cambio de Horario
-                startActivity(new Intent(RegistrarSol.this, CancelarSol.class));
+            case 4: // Logout
+                logout(); // Llamar al método logout
                 return true;
-
-            case 5: // Logout
-                startActivity(new Intent(RegistrarSol.this, MainActivity.class));
-                return true;
-
             default:
                 return false;
         }
@@ -224,6 +280,7 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
                 JSONObject jsonResponse = new JSONObject(response);
                 JSONArray data = jsonResponse.getJSONArray("data");
 
+
                 laboratorios.clear();
                 laboratorioLocations.clear();
 
@@ -234,7 +291,7 @@ public class RegistrarSol extends AppCompatActivity implements OnMapReadyCallbac
                             "Edificio " + lab.getInt("num_ed") + aula +
                             " (" + lab.getString("departamento") + ")";
                     laboratorios.add(nombre);
-
+                    idlaboratorio = lab.getInt("idlaboratorio");
                     double latitude = lab.getDouble("latitude");
                     double longitude = lab.getDouble("longitude");
                     laboratorioLocations.add(new LatLng(latitude, longitude));
